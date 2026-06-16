@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>終極密碼猜數字</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center justify-between p-4">
+    <header class="w-full max-w-md flex justify-between items-center py-4">
+        <a href="../index.html" class="bg-slate-800 text-amber-400 px-4 py-2 rounded-xl text-sm border border-slate-700">← 返回首頁</a>
+        <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full">🔢 邏輯推理</span>
+    </header>
+
+    <main class="flex flex-col items-center my-auto w-full max-w-md bg-slate-950 p-6 rounded-2xl border border-slate-800 shadow-xl">
+        <h1 class="text-2xl font-black text-amber-400 mb-2">終極密碼 🔢</h1>
+        
+        <div class="bg-slate-900 w-full py-6 rounded-xl border border-slate-800 text-center my-4">
+            <p class="text-xs text-slate-400 uppercase tracking-widest">目前密碼範圍</p>
+            <p id="rangeText" class="text-3xl font-black text-white mt-1">1 ~ 100</p>
+        </div>
+
+        <div class="w-full space-y-3">
+            <input type="number" id="guessInput" class="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-center text-xl font-bold focus:outline-none focus:border-amber-500" placeholder="輸入你的答案">
+            <button id="submitBtn" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-black py-3 rounded-xl transition shadow-lg">提交猜測</button>
+        </div>
+
+        <p id="hintText" class="mt-4 text-sm text-slate-400 text-center font-medium min-h-5"></p>
+    </main>
+
+    <script>
+        let answer, min, max, attempts;
+        const rangeText = document.getElementById('rangeText');
+        const guessInput = document.getElementById('guessInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const hintText = document.getElementById('hintText');
+
+        function initGame() {
+            answer = Math.floor(Math.random() * 100) + 1;
+            min = 1;
+            max = 100;
+            attempts = 0;
+            rangeText.textContent = `${min} ~ ${max}`;
+            hintText.textContent = '遊戲開始！請猜一個 1 到 100 之間的數字。';
+            guessInput.value = '';
+            submitBtn.textContent = '提交猜測';
+        }
+
+        submitBtn.addEventListener('click', () => {
+            if (submitBtn.textContent === '再玩一次') {
+                initGame();
+                return;
+            }
+
+            const guess = parseInt(guessInput.value);
+            if (isNaN(guess) || guess < min || guess > max) {
+                hintText.textContent = `⚠️ 請輸入有效範圍內的數字 (${min} ~ ${max})`;
+                return;
+            }
+
+            attempts++;
+
+            if (guess === answer) {
+                hintText.className = "mt-4 text-sm text-emerald-400 text-center font-bold";
+                hintText.textContent = `🎉 答對了！答案就是 ${answer}！你一共猜了 ${attempts} 次。`;
+                submitBtn.textContent = '再玩一次';
+            } else if (guess < answer) {
+                min = guess + 1;
+                hintText.textContent = '太小囉！密碼再大一點。';
+            } else {
+                max = guess - 1;
+                hintText.textContent = '太大囉！密碼再小一點。';
+            }
+
+            rangeText.textContent = `${min} ~ ${max}`;
+            guessInput.value = '';
+        });
+
+        initGame();
+    </script>
+</body>
+</html>

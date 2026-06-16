@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyApps 遊戲與工具總覽入口</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        /* 霓虹漸層與背景微光 */
+        .neon-bg {
+            background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 100%);
+        }
+        .glow-indigo:hover {
+            box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.5);
+        }
+        .glow-emerald:hover {
+            box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.5);
+        }
+        .glow-amber:hover {
+            box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.5);
+        }
+    </style>
+</head>
+<body class="neon-bg text-slate-100 font-sans min-h-screen flex flex-col">
+
+    <header class="border-b border-slate-800/80 bg-slate-950/50 backdrop-blur-md py-8 px-4 text-center sticky top-0 z-50">
+        <div class="inline-block bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+            <h1 class="text-4xl font-extrabold tracking-wider md:text-5xl mb-2">Ted 的 MyApps 門戶入口</h1>
+        </div>
+        <p class="text-slate-400 text-sm max-w-md mx-auto mt-2">
+            結合 HTML5、CSS3 與 JavaScript 驅動的個人終端微應用空間。
+        </p>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-12 flex-grow w-full">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <div class="bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-800 p-6 hover:border-indigo-500/50 transition-all duration-300 transform hover:-translate-y-2 glow-indigo flex flex-col justify-between">
+                <div>
+                    <div class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">⚖️ 實用工具</div>
+                    <h3 class="text-xl font-bold text-white mb-2">BMI 健康計算機</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        快速計算身體質量指數，具備動態顏色級別反饋與理想體重科學建議。
+                    </p>
+                </div>
+                <a href="./bmi/index.html" class="block text-center bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 px-4 rounded-xl transition duration-200 shadow-lg shadow-indigo-600/20">
+                    開啟工具
+                </a>
+            </div>
+
+            <div class="bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-800 p-6 hover:border-emerald-500/50 transition-all duration-300 transform hover:-translate-y-2 glow-emerald flex flex-col justify-between">
+                <div>
+                    <div class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2">🐍 經典遊戲</div>
+                    <h3 class="text-xl font-bold text-white mb-2">經典貪食蛇</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        使用鍵盤方向鍵控制蛇身，吃掉紅蘋果獲取積分，挑戰你的最高分數紀錄。
+                    </p>
+                </div>
+                <a href="./snake/index.html" class="block text-center bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3 px-4 rounded-xl transition duration-200 shadow-lg shadow-emerald-600/20">
+                    開始遊玩
+                </a>
+            </div>
+
+            <div class="bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-800 p-6 hover:border-amber-500/50 transition-all duration-300 transform hover:-translate-y-2 glow-amber flex flex-col justify-between">
+                <div>
+                    <div class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">📝 數位學習</div>
+                    <h3 class="text-xl font-bold text-white mb-2">英文單字互動測驗</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        精選核心字彙選擇題，擁有即時對錯反饋、動態進度條與總分結算系統。
+                    </p>
+                </div>
+                <a href="./quiz/index.html" class="block text-center bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold py-3 px-4 rounded-xl transition duration-200 shadow-lg shadow-amber-600/20">
+                    開始測驗
+                </a>
+            </div>
+
+            <div class="bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-800 p-6 hover:border-indigo-500/50 transition-all duration-300 transform hover:-translate-y-2 glow-indigo flex flex-col justify-between">
+                <div>
+                    <div class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">🧩 益智遊戲</div>
+                    <h3 class="text-xl font-bold text-white mb-2">翻牌記憶工坊</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        考驗你的大腦短期記憶！點擊卡片進行經典的圖案配對挑戰，點擊時具備 3D 翻轉特效。
+                    </p>
+                </div>
+                <a href="./cards/index.html" class="block text-center bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 px-4 rounded-xl transition duration-200 shadow-lg shadow-indigo-600/20">
+                    挑戰記憶
+                </a>
+            </div>
+
+            <div class="bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-800 p-6 hover:border-emerald-500/50 transition-all duration-300 transform hover:-translate-y-2 glow-emerald flex flex-col justify-between">
+                <div>
+                    <div class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2">🔮 隨機娛樂</div>
+                    <h3 class="text-xl font-bold text-white mb-2">絢麗粒子抽籤</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        晚餐吃什麼？今天誰倒楣？輸入選項，點擊後觸發酷炫的粒子特效，隨機幫你做決定！
+                    </p>
+                </div>
+                <a href="./lucky/index.html" class="block text-center bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3 px-4 rounded-xl transition duration-200 shadow-lg shadow-emerald-600/20">
+                    啟動抽籤
+                </a>
+            </div>
+
+            <div class="bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-800 p-6 hover:border-amber-500/50 transition-all duration-300 transform hover:-translate-y-2 glow-amber flex flex-col justify-between">
+                <div>
+                    <div class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">🔢 邏輯推理</div>
+                    <h3 class="text-xl font-bold text-white mb-2">終極密碼猜數字</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        系統隨機生成 1~100 的數字，透過每次猜測動態縮小範圍，看看你需要幾次才能猜中。
+                    </p>
+                </div>
+                <a href="./guess/index.html" class="block text-center bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold py-3 px-4 rounded-xl transition duration-200 shadow-lg shadow-amber-600/20">
+                    開始解密
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-slate-950/80 text-slate-500 py-6 text-center text-xs border-t border-slate-900">
+        <p>© 2026 [你的姓名/暱稱] 版權所有. 網頁頂級視覺美化版.</p>
+    </footer>
+
+</body>
+</html>

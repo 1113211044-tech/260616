@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英文單字互動測驗 - 數位學習</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col items-center justify-between p-4">
+
+    <header class="w-full max-w-md flex justify-between items-center py-4">
+        <a href="../index.html" class="bg-white hover:bg-slate-100 text-amber-600 font-medium px-4 py-2 rounded-xl border border-slate-200 shadow-sm transition duration-200 text-sm flex items-center gap-1">
+            ← 返回首頁
+        </a>
+        <span class="text-xs font-bold text-amber-500 bg-amber-50 px-3 py-1 rounded-full uppercase tracking-wider">數位學習與測驗類</span>
+    </header>
+
+    <main class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-100 p-6 my-auto relative overflow-hidden">
+        
+        <div id="quizBox">
+            <div class="w-full bg-slate-100 h-2 rounded-full mb-6 overflow-hidden">
+                <div id="progressBar" class="bg-amber-500 h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <div class="mb-6">
+                <span id="questionNum" class="text-xs font-bold text-amber-600 tracking-wide uppercase">QUESTION 1 OF 3</span>
+                <h2 id="questionText" class="text-2xl font-black text-slate-900 mt-1 leading-snug">
+                    "apple" 的中文意思是什麼？
+                </h2>
+            </div>
+
+            <div id="optionsContainer" class="space-y-3">
+                <button class="w-full text-left px-5 py-4 rounded-2xl border-2 border-slate-100 hover:border-amber-500 hover:bg-amber-50/30 font-medium transition duration-200">選項</button>
+            </div>
+
+            <div id="feedbackBox" class="hidden mt-6 p-4 rounded-2xl text-sm font-semibold transition-all duration-300">
+                <p id="feedbackText"></p>
+            </div>
+
+            <button id="nextBtn" class="hidden w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl shadow-md transition duration-150 text-base mt-6">
+                下一題 →
+            </button>
+        </div>
+
+        <div id="resultBox" class="hidden text-center py-6">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="text-2xl font-black text-slate-900 mb-1">測驗完成！</h2>
+            <p class="text-slate-400 text-sm mb-6">太棒了，你已經完成了所有題目。</p>
+            
+            <div class="inline-block bg-amber-50 rounded-3xl px-8 py-6 border border-amber-100 mb-8">
+                <p class="text-xs font-bold text-amber-600 uppercase tracking-wider">最終得分</p>
+                <p class="text-5xl font-black text-amber-600 mt-1"><span id="finalScore">0</span> / 100</p>
+            </div>
+
+            <button id="restartBtn" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 rounded-xl shadow-md transform active:scale-[0.98] transition duration-150 text-base">
+                重新挑戰
+            </button>
+        </div>
+
+    </main>
+
+    <footer class="text-slate-400 text-xs py-4 text-center">
+        具備即時對錯反饋與計分系統
+    </footer>
+
+    <script>
+        // 題庫資料陣列 (可以自行修改或增加題目)
+        const quizData = [
+            {
+                question: '英文單字 "independent" 的中文意思是什麼？',
+                options: ['依賴的', '獨立的', '危險的', '有趣的'],
+                correct: 1 // 對應選項的索引 (0代表第一個)
+            },
+            {
+                question: '網頁前端的核心技術中，哪一個負責處理「網頁互動與邏輯」？',
+                options: ['HTML5', 'CSS3', 'JavaScript', 'SQL'],
+                correct: 2
+            },
+            {
+                question: '本學期期末專題的網頁，最終要發佈託管在什麼平台上？',
+                options: ['Google Drive', 'GitHub Pages', 'Facebook', 'LINE'],
+                correct: 1
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let hasAnswered = false; // 用來防止重複點選答案
+
+        const questionNum = document.getElementById('questionNum');
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const progressBar = document.getElementById('progressBar');
+        const feedbackBox = document.getElementById('feedbackBox');
+        const feedbackText = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        
+        const quizBox = document.getElementById('quizBox');
+        const resultBox = document.getElementById('resultBox');
+        const finalScore = document.getElementById('finalScore');
+        const restartBtn = document.getElementById('restartBtn');
+
+        // 初始化測驗
+        function loadQuiz() {
+            hasAnswered = false;
+            feedbackBox.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+
+            // 更新題號與題目文字
+            questionNum.textContent = `QUESTION ${currentQuestionIndex + 1} OF ${quizData.length}`;
+            questionText.textContent = quizData[currentQuestionIndex].question;
+
+            // 更新上方進度條
+            const progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+
+            // 清空舊選項並動態渲染新選項
+            optionsContainer.innerHTML = '';
+            quizData[currentQuestionIndex].options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'w-full text-left px-5 py-4 rounded-2xl border-2 border-slate-100 hover:border-amber-500 hover:bg-amber-50/30 font-medium transition duration-200 focus:outline-none';
+                button.textContent = option;
+                
+                // 綁定選項點擊事件
+                button.addEventListener('click', () => selectAnswer(index, button));
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        // 處理玩家點選答案
+        function selectAnswer(selectedIndex, selectedButton) {
+            if (hasAnswered) return; // 如果這題答過了，就不重複執行
+            hasAnswered = true;
+
+            const correctIndex = quizData[currentQuestionIndex].correct;
+            const allButtons = optionsContainer.querySelectorAll('button');
+
+            // 停用所有按鈕的點擊效果，避免穿幫
+            allButtons.forEach(btn => btn.style.pointerEvents = 'none');
+
+            // 【評分重點：即時回饋邏輯】
+            if (selectedIndex === correctIndex) {
+                // 答對了
+                selectedButton.className = 'w-full text-left px-5 py-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-bold';
+                feedbackBox.className = 'mt-6 p-4 rounded-2xl text-sm font-semibold bg-emerald-100 text-emerald-800';
+                feedbackText.textContent = '🎉 太棒了！答對囉！';
+                score += Math.round(100 / quizData.length); // 依題目數量均分 100 分
+            } else {
+                // 答錯了
+                selectedButton.className = 'w-full text-left px-5 py-4 rounded-2xl border-2 border-rose-500 bg-rose-50 text-rose-800 font-bold';
+                
+                // 把正確答案塗成綠色提示玩家
+                allButtons[correctIndex].className = 'w-full text-left px-5 py-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-bold';
+                
+                feedbackBox.className = 'mt-6 p-4 rounded-2xl text-sm font-semibold bg-rose-100 text-rose-800';
+                feedbackText.textContent = `❌ 答錯囉！正確答案是："${quizData[currentQuestionIndex].options[correctIndex]}"`;
+            }
+
+            feedbackBox.classList.remove('hidden');
+            nextBtn.classList.remove('hidden');
+            
+            // 如果是最後一題，把「下一題」按鈕換成「查看結果」
+            if (currentQuestionIndex === quizData.length - 1) {
+                nextBtn.textContent = '查看測驗結果 📊';
+            }
+        }
+
+        // 下一題按鈕點擊
+        nextBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < quizData.length) {
+                loadQuiz();
+            } else {
+                // 題目全部答完，顯示結算畫面
+                progressBar.style.width = '100%';
+                quizBox.classList.add('hidden');
+                resultBox.classList.remove('hidden');
+                
+                // 防呆：如果是 3 題，最高分做成 100 分
+                finalScore.textContent = score > 100 ? 100 : score;
+            }
+        });
+
+        // 重新挑戰按鈕點擊
+        restartBtn.addEventListener('click', () => {
+            currentQuestionIndex = 0;
+            score = 0;
+            quizBox.classList.remove('hidden');
+            resultBox.classList.add('hidden');
+            nextBtn.textContent = '下一題 →';
+            loadQuiz();
+        });
+
+        // 網頁載入後啟動第一題
+        loadQuiz();
+    </script>
+</body>
+</html>

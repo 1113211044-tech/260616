@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>翻牌記憶工坊</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        /* 3D 翻牌核心特效 */
+        .card-container { 
+            perspective: 1000px; 
+        }
+        .card-inner {
+            width: 100%;
+            hight: 100%;
+            transition: transform 0.4s ease-in-out;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+        /* 當被翻開時旋轉 180 度 */
+        .card-flipped { 
+            transform: rotateY(180deg); 
+        }
+        
+        /* 確保正面與背面完美重疊且背對背隱藏 */
+        .card-front, .card-back {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden; /* 相容舊版瀏覽器 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.75rem;
+        }
+        
+        /* 背面預先轉過來，並強制加上 translateZ 確保文字浮在最上層 */
+        .card-back { 
+            transform: rotateY(180deg) translateZ(1px); 
+        }
+        
+        /* 數字發光霓虹特效 */
+        .neon-text-glow {
+            text-shadow: 0 0 8px rgba(52, 211, 153, 0.9), 0 0 15px rgba(52, 211, 153, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center justify-between p-4">
+
+    <header class="w-full max-w-md flex justify-between items-center py-4">
+        <a href="../index.html" class="bg-slate-800 hover:bg-slate-700 text-indigo-400 px-4 py-2 rounded-xl text-sm border border-slate-700 transition">
+            ← 返回首頁
+        </a>
+        <span class="text-xs font-bold text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full uppercase tracking-wider">🧩 益智遊戲</span>
+    </header>
+
+    <main class="flex flex-col items-center my-auto w-full max-w-md">
+        <h1 class="text-2xl font-black text-indigo-400 mb-2 tracking-wide">翻牌記憶工坊 🧩</h1>
+        <p class="text-xs text-slate-400 mb-4">找出兩兩相同的神秘數字配對吧！</p>
+        
+        <div id="grid" class="grid grid-cols-4 gap-3 w-full aspect-square bg-slate-950 p-4 rounded-2xl border border-slate-800 shadow-2xl">
+            </div>
+        
+        <button id="restart" class="mt-6 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 px-8 rounded-xl shadow-lg w-full transform active:scale-[0.98] transition duration-150">
+            重新洗牌
+        </button>
+    </main>
+
+    <footer class="text-slate-600 text-xs py-4 text-center">
+        3D Card Flip Animation Fixed Version
+    </footer>
+
+    <script>
+        const numbers = ['01', '02', '03', '04', '05', '06', '07', '08'];
+        let cardsData = [...numbers, ...numbers]; 
+        let flippedCards = [];
+        let matchedCount = 0;
+
+        function initGame() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+            flippedCards = [];
+            matchedCount = 0;
+            
+            // 隨機洗牌
+            cardsData.sort(() => Math.random() - 0.5);
+
+            cardsData.forEach((num, index) => {
+                const card = document.createElement('div');
+                // 必須設定高度與寬度為 100% 填滿網格
+                card.className = 'card-container h-full w-full cursor-pointer aspect-square';
+                card.innerHTML = `
+                    <div class="card-inner w-full h-full">
+                        <div class="card-front bg-indigo-950 border-2 border-indigo-800/60 text-indigo-400 text-2xl font-black select-none">
+                            ?
+                        </div>
+                        <div class="card-back bg-slate-800 border-2 border-emerald-500 text-emerald-400 text-3xl font-black select-none neon-text-glow">
+                            ${num}
+                        </div>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => {
+                    const inner = card.querySelector('.card-inner');
+                    
+                    if (inner.classList.contains('card-flipped') || flippedCards.length >= 2) return;
+
+                    // 執行翻牌旋轉
+                    inner.classList.add('card-flipped');
+                    flippedCards.push({ index, num, element: inner });
+
+                    if (flippedCards.length === 2) {
+                        setTimeout(checkMatch, 500);
+                    }
+                });
+
+                grid.appendChild(card);
+            });
+        }
+
+        function checkMatch() {
+            const [c1, c2] = flippedCards;
+            
+            if (c1.num === c2.num) {
+                matchedCount += 2;
+                if (matchedCount === cardsData.length) {
+                    setTimeout(() => {
+                        alert('🎉 太強了！所有記憶卡片配對成功！');
+                    }, 300);
+                }
+            } else {
+                // 配對失敗，翻回去
+                c1.element.classList.remove('card-flipped');
+                c2.element.classList.remove('card-flipped');
+            }
+            flippedCards = [];
+        }
+
+        document.getElementById('restart').addEventListener('click', initGame);
+        initGame();
+    </script>
+</body>
+</html>

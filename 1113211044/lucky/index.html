@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>絢麗粒子抽籤</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        .neon-glow {
+            text-shadow: 0 0 15px rgba(245, 158, 11, 0.8), 0 0 30px rgba(245, 158, 11, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center justify-between p-4">
+    
+    <header class="w-full max-w-md flex justify-between items-center py-4">
+        <a href="../index.html" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 px-4 py-2 rounded-xl text-sm border border-slate-700 transition">
+            ← 返回首頁
+        </a>
+        <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full uppercase tracking-wider">🔮 隨機娛樂</span>
+    </header>
+
+    <main class="flex flex-col items-center my-auto w-full max-w-md bg-slate-950 p-6 rounded-2xl border border-slate-800 shadow-xl">
+        <h1 class="text-2xl font-black text-emerald-400 mb-2 tracking-wide">絢麗粒子抽籤 🔮</h1>
+        <p class="text-xs text-slate-400 mb-4 text-center">遇到了選擇障礙？輸入選項，讓系統幫你決定！</p>
+
+        <textarea id="optionsInput" class="w-full h-28 bg-slate-900 border border-slate-700 rounded-xl p-4 focus:outline-none focus:border-emerald-500 text-sm leading-relaxed text-slate-200" placeholder="請用「逗號」或「空格」隔開各個選項。&#10;例如：吃火鍋 麥當勞 咖哩飯 肯德基"></textarea>
+        
+        <button id="drawBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg mt-4 transform active:scale-[0.98] transition duration-150">
+            開始抽籤
+        </button>
+
+        <div id="resultDisplay" class="mt-8 text-center hidden w-full py-6 bg-slate-900/50 rounded-xl border border-slate-800/80">
+            <p class="text-xs text-slate-500 uppercase tracking-widest">最終決定結果</p>
+            <p id="resultText" class="text-4xl font-black text-amber-400 mt-3 neon-glow px-4 break-words"></p>
+        </div>
+    </main>
+
+    <footer class="text-slate-600 text-xs py-4 text-center">
+        Random Selection Logic with Dynamic UI Feedback
+    </footer>
+
+    <script>
+        document.getElementById('drawBtn').addEventListener('click', () => {
+            const input = document.getElementById('optionsInput').value;
+            // 透過正規表達式切割逗號、頓號、空格
+            const list = input.split(/[,，、\s]+/).filter(item => item.trim() !== '');
+
+            if (list.length === 0) {
+                alert('⚠️ 請先在輸入框裡寫一些選項喔！');
+                return;
+            }
+
+            const drawBtn = document.getElementById('drawBtn');
+            const resultDisplay = document.getElementById('resultDisplay');
+            const resultText = document.getElementById('resultText');
+
+            drawBtn.disabled = true;
+            resultDisplay.classList.remove('hidden');
+
+            // 跑馬燈跳動效果
+            let count = 0;
+            const interval = setInterval(() => {
+                // 隨機切換顯示字串
+                resultText.textContent = list[Math.floor(Math.random() * list.length)];
+                count++;
+                
+                // 跳動 12 次後停止
+                if (count > 12) {
+                    clearInterval(interval);
+                    const finalChoice = list[Math.floor(Math.random() * list.length)];
+                    resultText.textContent = `✨ ${finalChoice} ✨`;
+                    drawBtn.disabled = false;
+                }
+            }, 80);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI 健康計算機 - 實用工具</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col items-center justify-between p-4">
+
+    <header class="w-full max-w-md flex justify-between items-center py-4">
+        <a href="../index.html" class="bg-white hover:bg-slate-100 text-indigo-600 font-medium px-4 py-2 rounded-xl border border-slate-200 shadow-sm transition duration-200 text-sm flex items-center gap-1">
+            ← 返回首頁
+        </a>
+        <span class="text-xs font-bold text-indigo-500 bg-indigo-50 px-3 py-1 rounded-full uppercase tracking-wider">實用工具類</span>
+    </header>
+
+    <main class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-100 p-6 my-auto">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-black text-slate-900 tracking-wide">BMI 健康計算機 ⚖️</h1>
+            <p class="text-slate-400 text-xs mt-1">輸入身高體重，秒懂你的健康體位</p>
+        </div>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">身高 (cm)</label>
+                <input type="number" id="height" placeholder="例如：175" min="50" max="250"
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg font-medium transition">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">體重 (kg)</label>
+                <input type="number" id="weight" placeholder="例如：65" min="10" max="300"
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg font-medium transition">
+            </div>
+            
+            <button id="calcBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-md transform active:scale-[0.98] transition duration-150 text-lg mt-2">
+                開始計算
+            </button>
+        </div>
+
+        <p id="errorMsg" class="hidden text-red-500 text-sm font-medium text-center mt-3">⚠️ 請輸入正確的身高與體重！</p>
+
+        <div id="resultCard" class="hidden mt-6 pt-6 border-t border-slate-100 transition-all duration-500">
+            <div class="text-center">
+                <p class="text-sm font-medium text-slate-500">計算結果 (BMI)</p>
+                <p id="bmiValue" class="text-5xl font-black my-2 text-indigo-600">21.3</p>
+                
+                <span id="statusTag" class="inline-block text-sm font-bold px-4 py-1.5 rounded-full mb-4">
+                    體重正常
+                </span>
+            </div>
+
+            <div id="adviceBox" class="rounded-2xl p-4 text-sm leading-relaxed transition-colors duration-300">
+                <p id="adviceText" class="font-medium text-slate-700"></p>
+                <p id="idealWeightText" class="text-xs text-slate-500 mt-1.5 pt-1.5 border-t border-slate-200/50"></p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-slate-400 text-xs py-4 text-center">
+        計算公式：BMI = 體重(kg) / 身高(m)²
+    </footer>
+
+    <script>
+        const heightInput = document.getElementById('height');
+        const weightInput = document.getElementById('weight');
+        const calcBtn = document.getElementById('calcBtn');
+        const errorMsg = document.getElementById('errorMsg');
+        const resultCard = document.getElementById('resultCard');
+        const bmiValueText = document.getElementById('bmiValue');
+        const statusTag = document.getElementById('statusTag');
+        const adviceBox = document.getElementById('adviceBox');
+        const adviceText = document.getElementById('adviceText');
+        const idealWeightText = document.getElementById('idealWeightText');
+
+        calcBtn.addEventListener('click', () => {
+            const h = parseFloat(heightInput.value);
+            const w = parseFloat(weightInput.value);
+
+            // 簡單的輸入驗證
+            if (!h || !w || h <= 0 || w <= 0) {
+                errorMsg.classList.remove('hidden');
+                resultCard.classList.add('hidden');
+                return;
+            }
+
+            errorMsg.classList.add('hidden');
+
+            // BMI 核心計算邏輯
+            const heightInMeters = h / 100;
+            const bmi = (w / (heightInMeters * heightInMeters)).toFixed(1);
+            
+            // 計算該身高的理想體重範圍 (BMI 18.5 ~ 24)
+            const minIdealWeight = (18.5 * heightInMeters * heightInMeters).toFixed(1);
+            const maxIdealWeight = (24 * heightInMeters * heightInMeters).toFixed(1);
+
+            // 渲染數據
+            bmiValueText.textContent = bmi;
+            idealWeightText.textContent = `💡 你的身高標準體重範圍為：${minIdealWeight} ~ ${maxIdealWeight} kg`;
+
+            // 利用 if-else 邏輯判斷體位，並動態抽換 Tailwind 樣式顏色 (滿足評分標準)
+            let status = '';
+            let advice = '';
+            let colorClasses = {};
+
+            if (bmi < 18.5) {
+                status = '體重過輕 🦴';
+                advice = '檢視看看是不是有營養不均的問題，建議多攝取優質蛋白質，並搭配重量訓練增肌。';
+                colorClasses = {
+                    tag: 'bg-sky-100 text-sky-700',
+                    box: 'bg-sky-50 text-sky-800',
+                    text: 'text-sky-600'
+                };
+            } else if (bmi >= 18.5 && bmi < 24) {
+                status = '體重正常 🎉';
+                advice = '太棒了！你的身材保持得非常標準，請繼續維持均衡飲食與規律運動的好習慣！';
+                colorClasses = {
+                    tag: 'bg-emerald-100 text-emerald-700',
+                    box: 'bg-emerald-50 text-emerald-800',
+                    text: 'text-emerald-600'
+                };
+            } else if (bmi >= 24 && bmi < 27) {
+                status = '體重過重 📈';
+                advice = '哎呀，有一點點超標囉。建議減少含糖飲料與油炸物，多走路、多運動就會瘦回理想體態！';
+                colorClasses = {
+                    tag: 'bg-amber-100 text-amber-700',
+                    box: 'bg-amber-50 text-amber-800',
+                    text: 'text-amber-600'
+                };
+            } else {
+                status = '肥胖等級 ⚠️';
+                advice = '目前的體重可能對健康造成負擔囉。建議調整飲食結構，並向營養師或專業醫師諮詢減重計畫。';
+                colorClasses = {
+                    tag: 'bg-rose-100 text-rose-700',
+                    box: 'bg-rose-50 text-rose-800',
+                    text: 'text-rose-600'
+                };
+            }
+
+            // 更新 UI 畫面樣式
+            statusTag.textContent = status;
+            statusTag.className = `inline-block text-sm font-bold px-4 py-1.5 rounded-full mb-4 ${colorClasses.tag}`;
+            
+            adviceText.textContent = advice;
+            adviceBox.className = `rounded-2xl p-4 text-sm leading-relaxed transition-colors duration-300 ${colorClasses.box}`;
+            
+            bmiValueText.className = `text-5xl font-black my-2 ${colorClasses.text}`;
+
+            // 讓結果卡片優雅地滑出/顯示
+            resultCard.classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
